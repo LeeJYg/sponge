@@ -7,7 +7,7 @@ My POVIS ID: jooyounglee
 
 My student ID (numeric): 20190622
 
-This assignment took me about 12 hours to do (including the time on studying, designing, and writing the code).
+This assignment took me about 16 hours to do (including the time on studying, designing, and writing the code).
 
 Program Structure and Design of the StreamReassembler:
 [우선 substring이 들어오면 그게 capacity 내 어디 위치할 지를 알아야 한다. 따라서 특정 index에 값이 들어왔는지 아닌지를 판단할 수 있는 data structure가 필요하고, 이 크기는 capacity를 넘지 않아야 한다.
@@ -26,20 +26,12 @@ Implementation Challenges:
 
 또한 당연하게도, push_substring을 구현하는 것이 난해하고 어려웠다. 우선 substring을 받아들일 수 있는 조건이 무엇인지부터 파악해야 했는데, index값이 out of capacity인 경우 거절해야 한다. 이 과정에서 substring의 last index와 capacity의 last index를 자주 사용하게 됨을 알 수 있었고, 이를 아예 변수로 선언함으로 난해함을 조금 해소할 수 있었다.
 
-is_end 변수를 언제 true로 만들어야 하는지는 비교적 쉬웠는데, 문제는 실제로 unassembled data를 다루는 곳이었다. data를 어떻게 처리해야 하는지 막막했었고, 결국 들어오는 string을 char 단위로 생각해 for문으로 반복해서 작업해야겠다는 결론에 도달했다. 그렇게 하자 다음 부분부터는 생각한 대로 작성할 수 있었던 것 같다.]
+is_end 변수를 언제 true로 만들어야 하는지는 비교적 쉬웠는데, 문제는 실제로 unassembled data를 다루는 곳이었다. data를 어떻게 처리해야 하는지 막막했었고, 결국 들어오는 string을 char 단위로 생각해 for문으로 반복해서 작업해야겠다는 결론에 도달했다. 그렇게 하자 다음 부분부터는 생각한 대로 작성할 수 있었던 것 같다.
+
+추가적으로 코드 작성이 완료된 이후 test 8/16에서 substr 오류가 발생했는데, 이를 해석하는 것에 8시간 이상 걸렸다. gdb를 이용해 오류 원인을 분석해봤고, 이에 더해 cout을 이용하여 내부 변수들이 어떻게 업데이트 되는지 추이를 지속적으로 확인했다. 그 결과 first_unassembled_index가 예상했던 것과 다르게(output에서 read가 occur되면 buffer를 아예 지워버리는데, first_unassembled_index는 여전히 지워지기 전 index를 가리키고 있고, 여기서 substr의 pos가 예상 외의 위치를 지정하느 오류가 발생했다.) 작동하는 것이 확인되었고, 결국 Data_NotStored 자체를 지속적으로 resize하는 과정을 통해 이 문제를 해결할 수 있었다.]
 
 Remaining Bugs:
-[ 
-        *해결된 edge case에 대한 이야기입니다. test는 정상적으로 통과했습니다.
-
- 8/16 Test #25: t_strm_reassem_cap ...............***Failed    0.00 sec
-Test Failure on expectation:
-        Action:      substring submitted with data "cd", index `2`, eof `0`
-
-Failure message:
-        basic_string::substr: __pos (which is 3) > this->size() (which is 2)
-
-이건 first_unassembled_index가 업데이트 된 이후, read를 알아차리지 못해 Data_NotStored의 이상한 곳을 가리키고 있기 때문에 발생한 문제다. 원래라면 Data_NotStored는 read가 된 data를 빼내야 하는데, 그 과정을 추가하기엔 read의 여부를 함수 내에서 알 수가 없었다. 따라서 Data_NotStored를 capacity 이상의 크기로 resize하는 과정을 통해 오류를 해결할 수는 있었다. 다만 이것은 이상적인 데이터 구조의 작동 방식이 아니었기에 추가적인 보정을 할 수 있을 것으로 보인다.]
+[남아 있는 버그는 발견되지 않는 것 같다.]
 
 - Optional: I had unexpected difficulty with: [describe]
 
