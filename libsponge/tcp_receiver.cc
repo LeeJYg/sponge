@@ -21,7 +21,7 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
 
     int64_t abo_seqno = unwrap(seg.header().seqno + static_cast<int>(seg.header().syn), _isn.value(), _checkpoint);
 
-    _reassembler.push_substring(seg.payload().copy(), abo_seqno, seg.header().fin);
+    _reassembler.push_substring(seg.payload().copy(), abo_seqno - 1, seg.header().fin);
     
     _checkpoint += seg.length_in_sequence_space();
 }
