@@ -5,7 +5,6 @@
 
 #include <cstdint>
 #include <string>
-
 #include <unordered_set>
 
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
@@ -16,8 +15,8 @@ class StreamReassembler {
 
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
-    
-    std::unordered_set<size_t> write_index;//insert, erase, find = O(1)
+
+    std::unordered_set<size_t> write_index;  // insert, erase, find = O(1)
     size_t unassembled_data;
     std::string Data_NotStored;
     size_t first_unassembled_index;

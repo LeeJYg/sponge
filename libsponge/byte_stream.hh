@@ -13,7 +13,7 @@ class ByteStream {
     // Your code here -- add private members as necessary.
     std::string _buffer = "";
     size_t _capacity = 0;
-    
+
     bool _flag_InputEnd = false;
     size_t _byte_Written = 0;
     size_t _byte_Popped = 0;

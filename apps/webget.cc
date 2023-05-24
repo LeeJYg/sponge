@@ -1,4 +1,4 @@
-#include "socket.hh"
+#include "tcp_sponge_socket.hh"
 #include "util.hh"
 
 #include <cstdlib>
@@ -17,18 +17,19 @@ void get_URL(const string &host, const string &path) {
     // (not just one call to read() -- everything) until you reach
     // the "eof" (end of file).
 
-    TCPSocket ClientSocket;
+    FullStackSocket ClientSocket;
     ClientSocket.connect(Address(host, "http"));
 
     ClientSocket.write("GET " + path + " HTTP/1.1\r\n");
     ClientSocket.write("Host: " + host + "\r\n");
     ClientSocket.write("Connection: close\r\n\r\n");
 
-    while(ClientSocket.eof() != true){
+    while (ClientSocket.eof() != true) {
         cout << ClientSocket.read();
-    }  
+    }
 
     ClientSocket.close();
+    ClientSocket.wait_until_closed();
     return;
 }
 

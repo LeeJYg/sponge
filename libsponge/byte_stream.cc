@@ -12,18 +12,18 @@ void DUMMY_CODE(Targs &&... /* unused */) {}
 
 using namespace std;
 
-ByteStream::ByteStream(const size_t capacity) { 
+ByteStream::ByteStream(const size_t capacity) {
     _buffer = "";
-    _capacity = capacity; 
+    _capacity = capacity;
     _flag_InputEnd = false;
     _byte_Written = 0;
     _byte_Popped = 0;
     _error = false;
-    }
+}
 
 size_t ByteStream::write(const string &data) {
     size_t NumberofByteAccepted = data.length();
-    if(NumberofByteAccepted > remaining_capacity()){
+    if (NumberofByteAccepted > remaining_capacity()) {
         NumberofByteAccepted = remaining_capacity();
     }
     _byte_Written += NumberofByteAccepted;
@@ -35,19 +35,18 @@ size_t ByteStream::write(const string &data) {
 //! \param[in] len bytes will be copied from the output side of the buffer
 string ByteStream::peek_output(const size_t len) const {
     size_t PeekLength = len;
-    if(len > buffer_size()){
+    if (len > buffer_size()) {
         PeekLength = buffer_size();
     }
     return _buffer.substr(0, PeekLength);
 }
 
 //! \param[in] len bytes will be removed from the output side of the buffer
-void ByteStream::pop_output(const size_t len) { 
+void ByteStream::pop_output(const size_t len) {
     size_t PopLength;
-    if(buffer_size() < len){
+    if (buffer_size() < len) {
         PopLength = buffer_size();
-    }
-    else{
+    } else {
         PopLength = len;
     }
     _byte_Popped += PopLength;
@@ -66,7 +65,10 @@ std::string ByteStream::read(const size_t len) {
     return ret;
 }
 
-void ByteStream::end_input() { _flag_InputEnd = true;  return; }
+void ByteStream::end_input() {
+    _flag_InputEnd = true;
+    return;
+}
 
 bool ByteStream::input_ended() const { return _flag_InputEnd; }
 

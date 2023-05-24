@@ -29,14 +29,51 @@ void Router::add_route(const uint32_t route_prefix,
     cerr << "DEBUG: adding route " << Address::from_ipv4_numeric(route_prefix).ip() << "/" << int(prefix_length)
          << " => " << (next_hop.has_value() ? next_hop->ip() : "(direct)") << " on interface " << interface_num << "\n";
 
-    DUMMY_CODE(route_prefix, prefix_length, next_hop, interface_num);
+    RouteElement r;
+    r._prefix = route_prefix;
+    r._pre_length = prefix_length;
+    r._next_hop_addr = next_hop;
+    r._interface_num = interface_num;
+
+    _routes.push_back(r);
     // Your code here.
 }
 
 //! \param[in] dgram The datagram to be routed
 void Router::route_one_datagram(InternetDatagram &dgram) {
-    DUMMY_CODE(dgram);
     // Your code here.
+    const auto idx = match_longest_prefix(dgram.header().dst);
+    if (dgram.header().ttl > 1 && idx > -1) {
+        dgram.header().ttl--;
+        if (_routes[idx]._next_hop_addr.has_value()) {
+            interface(_routes[idx]._interface_num).send_datagram(dgram, _routes[idx]._next_hop_addr->ip());
+        } else {
+            interface(_routes[idx]._interface_num).send_datagram(dgram, Address::from_ipv4_numeric(dgram.header().dst));
+        }
+    }
+}
+
+int Router::match_longest_prefix(uint32_t addr) {
+    int max = -1;
+    int idx = -1;
+    int iter = 0;
+
+    for (auto r : _routes) {
+        uint32_t mask = 0;
+        if (r._pre_length != 0) {
+            mask = 0xffffffff << (32 - r._pre_length);
+        }
+
+        if ((mask & addr) == (mask & r._prefix)) {
+            if (max < r._pre_length) {
+                idx = iter;
+                max = r._pre_length;
+            }
+        }
+        iter++;
+    }
+
+    return idx;
 }
 
 void Router::route() {
